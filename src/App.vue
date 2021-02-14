@@ -1,10 +1,9 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
+    <keep-alive exclude="ProductDetail, Cart">
+      <router-view/>
+    </keep-alive>
+    <bottom-bar v-show="isShowNav"></bottom-bar>
   </div>
 </template>
 
@@ -15,5 +14,32 @@
   -moz-osx-font-smoothing grayscale
   text-align center
   color #2c3e50
-  margin-top 60px
+  font-size 16px
 </style>
+
+<script>
+import BottomBar from 'content/BottomBar'
+
+export default {
+  components: {
+    BottomBar,
+  },  
+  data () {
+    return {
+      isShowNav : true,
+      // 只在下列路径中展示bottom-bar
+      showNavList : ['/home','/category','/user','/cart'],
+    }
+  },
+  watch: {
+    $route(to, from){
+      if(this.showNavList.includes(to.path)) {
+        this.isShowNav = true
+      }else{
+        this.isShowNav = false
+      }      
+    }
+  }
+
+}
+</script>
