@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <keep-alive exclude="ProductDetail, Cart">
+    <keep-alive exclude="ProductDetail">
       <router-view/>
     </keep-alive>
     <bottom-bar v-show="isShowNav"></bottom-bar>
@@ -19,6 +19,7 @@
 
 <script>
 import BottomBar from 'content/BottomBar'
+import { getCart } from 'network/cart'
 
 export default {
   components: {
@@ -31,6 +32,9 @@ export default {
       showNavList : ['/home','/category','/user','/cart'],
     }
   },
+  // mounted() {
+  //   this.initCartList()
+  // },
   watch: {
     $route(to, from){
       if(this.showNavList.includes(to.path)) {
@@ -39,7 +43,19 @@ export default {
         this.isShowNav = false
       }      
     }
-  }
-
+  },
+  methods: {
+  //   async initCartList() {
+  //     const { data } = await getCart()
+  //     let num = 0;
+  //     for (let i of data){
+  //       Vue.set(i,'checked',false)
+  //       Vue.set(i,'index',num)
+  //       num++
+  //     }
+  //     this.$store.commit('initCartData', data)
+  //   }
+  // }
+}
 }
 </script>

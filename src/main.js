@@ -30,3 +30,20 @@ Vue.prototype.$md5 = md5
 
 window.vRouter = router
 
+import { getCart } from 'network/cart'
+
+async function initCartList() {
+  const { data } = await getCart()
+  let num = 0;
+  for (let i of data){
+    Vue.set(i,'checked',false)
+    Vue.set(i,'index',num)
+    num++
+  }
+  store.commit('initCartData', data)
+  }
+
+initCartList()
+
+
+

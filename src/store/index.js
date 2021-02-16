@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import { getCart, addCart } from 'network/cart'
+import { addCart } from 'network/cart'
 
 Vue.use(Vuex)
 
@@ -11,43 +11,45 @@ export default new Vuex.Store({
     cartList: [],
   },
   actions: {
-    // judgeProduct(context,product){
-    //   let list=state.cartList;
-    //   for(let i in list){
-    //       if(list[i].goodsId==product.goodsId){
-    //           context.commit("addCount",i);
-    //           return;
-    //       } 
-    //   }
-    //   context.commit("addProduct",product);
-    // },
-
-    async getCart(ctx) {
-      const { data } = await getCart()
-      let num = 0;
-      for (let i of data){
-        Vue.set(i,'checked',false)
-        Vue.set(i,'index',num)
-        num++
-      } 
-      ctx.commit('getCart', data)
+    // 方案二
+    judgeProduct(context,product){
+      let list = context.state.cartList;
+      for(let i in list){
+          if(list[i].goodsId==product.goodsId){
+              context.commit("addCount",i);
+              return;
+          } 
+      }
+      context.commit("addProduct",product);
     },
+    // 方案一
+    // async getCart(ctx) {
+    //   const { data } = await getCart()
+    //   let num = 0;
+    //   for (let i of data){
+    //     Vue.set(i,'checked',false)
+    //     Vue.set(i,'index',num)
+    //     num++
+    //   } 
+    //   ctx.commit('getCart', data)
+    // },
 
   },
   mutations: {
+    initCartData(state,payload) {
+      state.cartList = payload
+    },
+    // 方案二
+    addCount(state,index){
+      state.cartList[index].count++
+    },
+    addProduct(state,product){
+        product.index=state.cartList.length;
+        state.cartList.push(product);
+        addCart({goodsCount: 1, goodsId: product.goodsId})
+    },  
 
-    // addCount(state,index){
-    //   state.cartList[index].count++
-    // },
-    // async addProduct(state,product){
-    //     product.index=state.cartList.length;
-    //     state.cartList.push(product);
-    //     await addCart({goodsCount: 1, goodsId: product.goodsId})
-    // },   
-    // addOldCart(state, payload) {
-
-    // },
-
+    // 方案一
     getCart(state, payload) {
       state.cartList = payload
       // console.log(state.cartList)
@@ -58,13 +60,13 @@ export default new Vuex.Store({
       state.cartCount = payload.count
     },
 
-    getData (state, payload) {
-      state.cartList.splice(0,state.cartList.length)
-      for(let i of payload.data) {
-        state.cartList.push(i)
-      }
-      // state.cartData = payload.data 
-    },
+    // getData (state, payload) {
+    //   state.cartList.splice(0,state.cartList.length)
+    //   for(let i of payload.data) {
+    //     state.cartList.push(i)
+    //   }
+    //   // state.cartData = payload.data 
+    // },
     addToCart(state,payload) {
       payload.checked = false;
       payload.index = state.cartCount-1

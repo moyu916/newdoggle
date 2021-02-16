@@ -19,7 +19,6 @@
 import NavBar from 'common/navbar/NavBar.vue'
 import Scroll from 'content/scroll/Scroll'
 
-import { getCart} from 'network/cart'
 
 import Vue from 'vue';
 import { Checkbox, CheckboxGroup, SwipeCell, Stepper, SubmitBar } from 'vant';
@@ -69,13 +68,19 @@ export default {
             }
         }
     },
-    mounted() {
-        this.init()
+    // mounted() {
+    //     this.init()
+    //     // console.log('mounted')
+    // },
+    // 方案二 
+    activated() {
+       this.init()
     },
     methods: {
-        async init() {
-            await this.$store.dispatch('getCart')
-
+        init() {
+            // 方案一
+            // await this.$store.dispatch('getCart')
+            // console.log(this.$store.state.cartList)
             this.cartList = this.$store.state.cartList
         },
         checkClick() {

@@ -31,7 +31,7 @@ export function getDetail(id) {
 export class cartProduct{
   constructor(goodsId,goodscoverImage,originalPrice,goodsName,count){
       this.goodsId=goodsId,
-      this.checked=true,
+      this.checked=false,
       this.goodscoverImage=goodscoverImage;
       this.originalPrice=originalPrice;//价格
       this.goodsName=goodsName;

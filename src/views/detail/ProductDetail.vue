@@ -82,14 +82,20 @@ export default {
     }, 
     methods: {
         async onClickCart () {
-            await addCart({goodsCount: 1, goodsId: this.goodsId})
+            // 方案一
+            // const { resultCode} = await addCart({goodsCount: 1, goodsId: this.goodsId})
+            // if(resultCode == 200) {
+            //     this.$toast.show('加入购物车成功')
+            // }
+            
 
-            // /**购物车逻辑部分 */
-            // this.cartProduct = new cartProduct(
-            //     // goodsId,goodscoverImage,originalPrice,goodsName,count
-            //     this.goodsId, this.goodsCoverImg, this.originalPrice, this.goodsName, 1
-            // )
-            // this.$store.dispatch('judgeProduct', this.cartProduct);  
+            // 方案二 /**购物车逻辑部分 */
+            this.cartProduct = new cartProduct(
+                // goodsId,goodscoverImage,originalPrice,goodsName,count
+                this.goodsId, this.goodsCoverImg, this.originalPrice, this.goodsName, 1
+            )
+            this.$store.dispatch('judgeProduct', this.cartProduct);  
+            this.$toast.show('加入购物车成功')
               
         },
         onClickBuy () {
