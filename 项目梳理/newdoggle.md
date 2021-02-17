@@ -591,5 +591,164 @@ initCartList()
 
 ### 购物车商品选择 & 全选、取消全选
 
+```js
+// 购物车页面 Cart.vue
+  <div id="cart">
+    <NavBar>
+      <template v-slot:center>购物车</template>
+    </NavBar>
+    <scroll class="cart-content" ref="scroll">
+        <cart-list :cartList="cartList"></cart-list>  // 购物车商品列表，接收cartList数据(数据中已经封装了checked index)
+    </scroll>
+    <div class="submit-all"> // 全选、取消全选、结算金额栏
+        <check-button :action="all" @checkClick="checkClick"></check-button>
+        <span class="textall">全选</span>
+        <span class="money">金额：￥{{total}}</span>
+        <button @click="onSubmit">结算</button>
+    </div>
+  </div>
+
+// CartList.vue
+// 将接收来的cartList数据通过v-for传给每一个CartListItem
+    <div class="cartlist" v-if="cartList.length!=0">
+        <cart-list-item v-for="(item,index) in cartList" :key="index" :item="item"/>
+    </div>
+
+// CartListItem.vue
+    <div class="cart-list-item">
+        <check-button :action="item.checked" @checkClick="checkClick" class="checkButton"/>
+        <div class="cart-content">
+            <img :src="prefix(item.goodsCoverImg)" alt="">
+            <div class="good-mess">
+                <div class="title">{{item.goodsName}}</div>
+                <div class="buy">
+                    <span class="price">￥{{item.sellingPrice}}</span>
+                    <span class="count">x{{item.goodsCount}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+```
+
 #### CheckButton组件的封装
 
+```js
+// CheckButton.vue 
+<div class="check" @click="checkClick">
+        <!--动态绑定class时监听不到对象里属性的变化如：:class="{action:item.checked}，通过click时修改item.checked时样式并不会随之变化--> // 需要通过外界改变接收的数据
+        <div class="item" :class="{action:action}"></div>
+    </div>
+
+    props:{
+        action:{ // 实际是item.checked
+            type:Boolean,
+            default(){
+                return false
+            }
+        }
+    },
+    methods:{
+        checkClick(){
+            // this.action=!this.action; // 直接改变接收来的action不行，动态绑定class时监听不到对象里属性的变化
+            this.$emit("checkClick");
+        }
+    }
+
+// CartListItem.vue 
+// CheckButton的父组件
+        checkClick(){
+            this.$store.commit("modifyChecked",this.item.index);
+        }
+
+//vuex
+    modifyChecked(state,index){
+      state.cartList[index].checked=!state.cartList[index].checked;
+    }, // 改变state.cartList会直接响应到Cart.vue中的this.cartList
+       // Cart.vue   is.cartList = this.$store.state.cartList
+```
+
+#### 计算总金额
+
+```js
+    computed: {
+        total: function() {
+            let sum = 0
+            let data_checked = this.cartList.filter(item => item.checked == true)
+            data_checked.forEach(item => {
+                sum+= item.goodsCount * item.sellingPrice
+            })
+            return sum
+        },
+    }
+```
+
+#### 全选、取消全选
+
+```js
+    <div class="submit-all">
+        <check-button :action="all"  // 监听所有item是否都选中，都选中all变为true，否则all为false
+					  @checkClick="checkClick"> // 通过点击执行全选、取消全选的操作
+        </check-button>
+        <span class="textall">全选</span>
+        <span class="money">金额：￥{{total}}</span>
+        <button @click="onSubmit">结算</button>
+    </div>
+
+computed: {
+       all() { // 监听
+            this.checkedItem = this.cartList.filter(item => item.checked == true)
+            if(this.checkedItem.length == this.cartList.length)
+            {
+                this.checkAll = true
+                return true
+            }
+            else {
+                this.checkAll = false
+                return false
+            }
+        }
+}
+methods: {
+        checkClick() {
+            if(this.checkAll) {
+                this.checkAll = false
+                this.$store.commit("unAllSelected"); 
+            }
+            else{
+                this.checkAll = true
+                this.$store.commit("allSelected"); 
+            }        
+        },
+}
+
+// vuex
+    allSelected(state){
+      state.cartList.forEach(item=>{
+          return item.checked=true;
+      })
+    },
+    unAllSelected(state){
+      state.cartList.forEach(item=>{
+          return item.checked=false;
+      })
+  	},
+```
+
+#### 结算
+
+```js
+        onSubmit() {
+            const params = JSON.stringify(this.checkedItem.map(item=>item.cartItemId))  // 通过all计算的checkedItem，将他们的cartItemId取出来
+            this.$router.push(`/createOrder?cartItemIds=${params}`)
+        },
+```
+
+## 项目打包上线
+
+vue-cli-service build --report 生成统计报告
+
+**运行打包后的文件**
+
+npm install -g serve
+
+serve -s dist
