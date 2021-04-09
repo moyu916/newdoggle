@@ -33,6 +33,7 @@ window.vRouter = router
 import { getCart } from 'network/cart'
 
 async function initCartList() {
+  // console.log('被调用了')
   const { data } = await getCart()
   let num = 0;
   for (let i of data){

@@ -85,7 +85,7 @@ export default {
                 //     // this.$router.push('/')  用这个会出现登录无效
                 // }
                 localStorage.setItem('token', data)
-                window.location.href = '/'
+                window.location.href = '/'  // 会触发浏览器，页面重新加载，因此会重新执行main.js向购物车接口请求数据
    
             }
             else {

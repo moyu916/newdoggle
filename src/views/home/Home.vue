@@ -4,7 +4,7 @@
       <scroll
         class="content"
         ref="scroll"
-        :probeType="1"
+        :probeType="1" 
         :pullUpLoad="true"
         @pullingUp="loadMore"
         @scroll="contentScroll"
@@ -60,7 +60,8 @@ export default {
         pics: [],
         hot: [],
         news: [],
-        recommend: [],
+        recommend: [], // 无限列表中存储的
+        show: [], // 真正渲染的
         page: 1,
         loading: false,
         finished: false,
@@ -89,8 +90,11 @@ export default {
             this.page = this.page + 1 
         }
         const { data, data: { list } } = await search({pageNumber: this.page, keyword: '手机'})
+        // console.log(list.length)
         
         this.recommend = this.recommend.concat(list)// this.productList = list
+        
+
         this.totalPage = data.totalPage
         this.loading = false
         if(this.page >= this.totalPage) this.finished = true 

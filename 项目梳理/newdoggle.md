@@ -745,7 +745,7 @@ methods: {
 
 ## 项目打包上线
 
-vue-cli-service build --report 生成统计报告
+vue-cli-service build "--report" 生成统计报告
 
 **运行打包后的文件**
 

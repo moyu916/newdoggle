@@ -1,5 +1,6 @@
 module.exports = {
-    // publicPath: process.env.NODE_ENV === 'production' ? '/superMall/' : '/',
+    productionSourceMap: process.env.NODE_ENV === 'dev',
+
     configureWebpack: {
       resolve: {
         alias: {
@@ -10,7 +11,8 @@ module.exports = {
           'network': '@/network',
           'views': '@/views',
         }
-      }
+      },
+      devtool: process.env.NODE_ENV === 'dev' ? 'source-map' : undefined
     },
     css: {
       loaderOptions: {
